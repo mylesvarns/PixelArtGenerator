@@ -1,0 +1,32 @@
+/* app/assets/stylesheets/pixel_art_generator.css */
+#container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+#canvas-container {
+  display: grid;
+  gap: 1px;
+}
+
+.pixel {
+  width: 10px;
+  height: 10px;
+  background-color: white;
+  cursor: pointer;
+  border: 1px solid #ccc;
+}
+
+button {
+  margin-top: 10px;
+}
+
+#canvas-settings {
+  display: flex;
+  align-items: center;
+}
+
+#canvas-settings label {
+  margin-right: 10px;
+}

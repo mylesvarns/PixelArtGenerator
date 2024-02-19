@@ -1,0 +1,19 @@
+/* app/assets/stylesheets/pixel_art_generator.css */
+#canvas-container {
+    display: grid;
+    grid-template-columns: repeat(16, 10px);
+    gap: 1px;
+  }
+  
+  .pixel {
+    width: 10px;
+    height: 10px;
+    border: 1px solid #ccc;
+    background-color: white;
+    cursor: pointer;
+  }
+  
+  button {
+    margin-top: 10px;
+  }
+  
