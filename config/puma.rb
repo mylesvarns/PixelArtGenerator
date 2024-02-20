@@ -22,6 +22,17 @@ end
 # terminating a worker in development environments.
 worker_timeout 3600 if ENV.fetch("RAILS_ENV", "development") == "development"
 
+# Use SSL in production
+if ENV["RAILS_ENV"] == "production"
+  ssl_bind '0.0.0.0', '3001', {
+    key: "/rails/app/ssl/server.key",
+    cert: "/rails/app/ssl/server.crt",
+    verify_mode: "none" # Use 'peer' if you have a CA-signed certificate
+  }
+else
+  bind 'tcp://0.0.0.0:3000'
+end
+
 # Specifies the `port` that Puma will listen on to receive requests; default is 3000.
 port ENV.fetch("PORT") { 3000 }
 

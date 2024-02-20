@@ -13,13 +13,24 @@ ENV RAILS_ENV="production" \
     BUNDLE_PATH="/usr/local/bundle" \
     BUNDLE_WITHOUT="development"
 
-
-# Throw-away build stage to reduce size of final image
-FROM base as build
-
-# Install packages needed to build gems
+# Install packages needed for SSL and build gems
 RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y build-essential git libvips pkg-config
+    apt-get install --no-install-recommends -y \
+    openssl build-essential git libvips pkg-config \
+    curl libsqlite3-0 libvips && \
+    rm -rf /var/lib/apt/lists /var/cache/apt/archives
+
+# Generate self-signed SSL certificates in /app/ssl directory
+RUN mkdir -p /rails/app/ssl && \
+    openssl req -new -newkey rsa:2048 -days 365 -nodes -x509 \
+    -keyout /rails/app/ssl/server.key -out /rails/app/ssl/server.crt \
+    -subj "/C=US/ST=State/L=City/O=Organization/OU=Unit/CN=localhost"
+
+# Copy application code
+COPY . .
+
+# Throw-away build stage to reduce size of final image, though still chunky, need to refine it further later
+FROM base as build
 
 # Install application gems
 COPY Gemfile Gemfile.lock ./
@@ -41,14 +52,8 @@ RUN chmod +x bin/* && \
 # Precompiling assets for production without requiring secret RAILS_MASTER_KEY
 RUN SECRET_KEY_BASE_DUMMY=1 ./bin/rails assets:precompile
 
-
 # Final stage for app image
-FROM base
-
-# Install packages needed for deployment
-RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y curl libsqlite3-0 libvips && \
-    rm -rf /var/lib/apt/lists /var/cache/apt/archives
+FROM base as final
 
 # Copy built artifacts: gems, application
 COPY --from=build /usr/local/bundle /usr/local/bundle
@@ -56,12 +61,18 @@ COPY --from=build /rails /rails
 
 # Run and own only the runtime files as a non-root user for security
 RUN useradd rails --create-home --shell /bin/bash && \
-    chown -R rails:rails db log storage tmp
-USER rails:rails
+    chown -R rails:rails /rails/db /rails/log /rails/storage /rails/tmp
 
-# Entrypoint prepares the database.
-ENTRYPOINT ["/rails/bin/docker-entrypoint"]
+# Configure Rails to use SSL from /rails/app/ssl directory
+COPY --from=build /rails/app/ssl /rails/app/ssl
+
+# Change permissions for SSL files
+RUN chmod 600 /rails/app/ssl/server.key /rails/app/ssl/server.crt
+
+# Entrypoint prepares the database and generates secret key base.
+COPY --from=build /rails/bin/docker-entrypoint /rails/bin/docker-entrypoint
+RUN chmod +x /rails/bin/docker-entrypoint
 
 # Start the server by default, this can be overwritten at runtime
-EXPOSE 3000
+EXPOSE 3000 3001
 CMD ["./bin/rails", "server"]
