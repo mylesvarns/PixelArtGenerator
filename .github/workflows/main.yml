@@ -22,9 +22,14 @@ jobs:
         - name: Run brakeman
           run: | 
             bundle exec brakeman -o .github/brakeman.log
-            cat .github/brakeman.log
             if grep -q "No warnings found" .github/brakeman.log; then
-              echo '{"status": "success"}' > brakeman_status.json
+              echo "BRACKMAN_STATUS=Passed" >> $GITHUB_ENV
             else
-              echo '{"status": "failure"}' > brakeman_status.json
+              echo "BRACKMAN_STATUS=Failed" >> $GITHUB_ENV
             fi
+
+        - name: Write log statuws to files
+          uses: frdrwrt/write-to-file@v1.3
+          with:
+              filepath: brakeman_status.json
+              content: echo "${{ env.BRACKMAN_STATUS }}"
