@@ -1,0 +1,19 @@
+current directory: /home/runner/work/PixelArtGenerator/PixelArtGenerator/vendor/bundle/ruby/3.2.0/gems/debug-1.9.1/ext/debug
+/opt/hostedtoolcache/Ruby/3.2.3/x64/bin/ruby extconf.rb
+creating Makefile
+
+current directory: /home/runner/work/PixelArtGenerator/PixelArtGenerator/vendor/bundle/ruby/3.2.0/gems/debug-1.9.1/ext/debug
+make DESTDIR\= sitearchdir\=./.gem.20240221-1661-2ntign sitelibdir\=./.gem.20240221-1661-2ntign clean
+
+current directory: /home/runner/work/PixelArtGenerator/PixelArtGenerator/vendor/bundle/ruby/3.2.0/gems/debug-1.9.1/ext/debug
+make DESTDIR\= sitearchdir\=./.gem.20240221-1661-2ntign sitelibdir\=./.gem.20240221-1661-2ntign
+compiling debug.c
+compiling iseq_collector.c
+linking shared-object debug/debug.so
+
+current directory: /home/runner/work/PixelArtGenerator/PixelArtGenerator/vendor/bundle/ruby/3.2.0/gems/debug-1.9.1/ext/debug
+make DESTDIR\= sitearchdir\=./.gem.20240221-1661-2ntign sitelibdir\=./.gem.20240221-1661-2ntign install
+/usr/bin/install -c -m 0755 debug.so ./.gem.20240221-1661-2ntign/debug
+
+current directory: /home/runner/work/PixelArtGenerator/PixelArtGenerator/vendor/bundle/ruby/3.2.0/gems/debug-1.9.1/ext/debug
+make DESTDIR\= sitearchdir\=./.gem.20240221-1661-2ntign sitelibdir\=./.gem.20240221-1661-2ntign clean
