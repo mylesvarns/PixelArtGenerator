@@ -1,3 +1,6 @@
+![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/mylesvarns/PixelArtGenerator/main.yml)
+![Brakeman Status](https://github.com/mylesvarns/pixelartgenerator/blob/main/status.json)
+
 Welcome to the Pixel Art Generator! This web application allows users to create pixel art easily by providing a canvas with customizable grid sizes and various features for an enhanced pixel art creation experience. Or at least, that is what one would hope. The truth is that at the moment this is just being used as a PoC and test image for CI/CD automation processes. It works, but you can find better images elsewhere as I just spun this app up from scratch in a day with no real plan on what to throw into it.
 
 ## Table of Contents
