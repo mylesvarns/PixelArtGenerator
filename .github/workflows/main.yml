@@ -23,9 +23,9 @@ jobs:
           run: | 
             bundle exec brakeman -o .github/logs/brakeman.log
             if grep -q "No warnings found" .github/logs/brakeman.log; then
-              echo "BRAKEMAN_STATUS=Passed" >> $GITHUB_ENV
+              echo "BRAKEMAN_STATUS=passing" >> $GITHUB_ENV
             else
-              echo "BRAKEMAN_STATUS=Failed" >> $GITHUB_ENV
+              echo "BRAKEMAN_STATUS=failing" >> $GITHUB_ENV
             fi
 
         - name: Write log status to files
@@ -33,7 +33,10 @@ jobs:
           with:
               path: .github/logs/brakeman_status.json
               write-mode: overwrite
-              contents: "${{ env.BRAKEMAN_STATUS }}"
+              contents: |
+                {
+                  "status": "${{ env.BRAKEMAN_STATUS }}"
+                }
                   
         - name: Commit & Push
           uses: Andro999b/push@v1.3
