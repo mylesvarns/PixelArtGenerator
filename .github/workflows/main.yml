@@ -19,7 +19,7 @@ jobs:
   
         - name: Run brakeman
           run: | 
-            brakeman -o .github/brakeman.log
+            bundle exec brakeman -o .github/brakeman.log
             cat .github/brakeman.log
             if grep -q "No warnings found" .github/brakeman.log; then
               echo '{"status": "success"}' > brakeman_status.json
