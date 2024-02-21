@@ -29,5 +29,5 @@ jobs:
         - name: Write log statuws to files
           uses: frdrwrt/write-to-file@v1.3
           with:
-              filepath: .github/brakeman_status.json
+              filepath: brakeman_status.json
               content: echo "${{ env.BRACKMAN_STATUS }}"
