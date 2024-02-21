@@ -21,8 +21,8 @@ jobs:
   
         - name: Run brakeman
           run: | 
-            bundle exec brakeman -o brakeman.log
-            if grep -q "No warnings found" brakeman.log; then
+            bundle exec brakeman -o .github/logs/brakeman.log
+            if grep -q "No warnings found" .github/logs/brakeman.log; then
               echo "BRAKEMAN_STATUS=passing" >> $GITHUB_ENV
             else
               echo "BRAKEMAN_STATUS=failing" >> $GITHUB_ENV
@@ -31,10 +31,12 @@ jobs:
         - name: Write log status to files
           uses: "DamianReeves/write-file-action@master"
           with:
-              path: brakeman_status.json
+              path: .github/logs/brakeman_status.json
               write-mode: overwrite
               contents: |
                 {
+                  "commit": "{{ github.event.push.payload.head }}",
+                  "branch": "${{ github.ref }}" ,
                   "status": "${{ env.BRAKEMAN_STATUS }}"
                 }
                   
