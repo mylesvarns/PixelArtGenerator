@@ -7,6 +7,8 @@ jobs:
       name: Run brakeman scan
       # Run this job on ubuntu-latest
       runs-on: ubuntu-latest
+      permissions:
+        contents: write
   
       steps:
         - name: Checkout Repo
