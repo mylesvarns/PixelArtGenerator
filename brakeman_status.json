@@ -1,3 +1,5 @@
 {
+  "commit": "{{ github.event.push.payload.head }}",
+  "branch": "refs/heads/main" ,
   "status": "passing"
 }
