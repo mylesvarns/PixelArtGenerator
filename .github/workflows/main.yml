@@ -18,11 +18,11 @@ jobs:
             bundler-cache: true
   
         - name: Run brakeman
-          run: |
-            output=$(bundle exec brakeman)
-            echo "$output"
-            if echo "$output" | grep -q "No warnings found"; then
-              echo '{"status": "success"}' > status.json
+          run: | 
+            brakeman -o .github/brakeman.log
+            cat .github/brakeman.log
+            if grep -q "No warnings found" .github/brakeman.log; then
+              echo '{"status": "success"}' > brakeman_status.json
             else
-              echo '{"status": "failure"}' > status.json
+              echo '{"status": "failure"}' > brakeman_status.json
             fi
