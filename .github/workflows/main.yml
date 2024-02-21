@@ -23,13 +23,22 @@ jobs:
           run: | 
             bundle exec brakeman -o .github/brakeman.log
             if grep -q "No warnings found" .github/brakeman.log; then
-              echo "BRACKMAN_STATUS=Passed" >> $GITHUB_ENV
+              echo "BRAKEMAN_STATUS=Passed" >> $GITHUB_ENV
             else
-              echo "BRACKMAN_STATUS=Failed" >> $GITHUB_ENV
+              echo "BRAKEMAN_STATUS=Failed" >> $GITHUB_ENV
             fi
 
-        - name: Write log statuws to files
-          uses: frdrwrt/write-to-file@v1.3
+        - name: Write log status to files
+          uses: "DamianReeves/write-file-action@master"
           with:
-              filepath: brakeman_status.json
-              content: echo "${{ env.BRACKMAN_STATUS }}"
+              path: .github/brakeman_status.json
+              write-mode: overwrite
+              contents: echo "${{ env.BRAKEMAN_STATUS }}"
+                  
+        - name: Commit & Push
+          uses: Andro999b/push@v1.3
+          with:
+            github_token: ${{ secrets.GITHUB_TOKEN }}
+            branch: main
+            force: true
+            message: 'Overwritten by Github Actions step `Run brakeman` - ${date}'
