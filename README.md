@@ -1,24 +1,188 @@
-# README
+Welcome to the Pixel Art Generator! This web application allows users to create pixel art easily, providing a canvas with customizable grid sizes and various features for an enhanced pixel art creation experience.
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+## Table of Contents
 
-Things you may want to cover:
+- [Getting Started](#getting-started)
+- [Prerequisites](#prerequisites)
+- [Installation](#installation)
+  - Acquire Image
+    - [Building from Source](#1a-recommended-building-from-source)
+    - [Pulling from Docker Hub](#1b-pulling-from-docker-hub)
+  - Deploy Container
+    - [Docker CLI or Similar (Yacht, Portainer, etc)](#2a-docker-cli-or-similar-yacht-portainer-etc)
+    - [Deploy Container with Terraform](#2b-deploy-container-with-terraform)
+- [Usage](#usage)
+  - [Main Webpage](#main-webpage)
+  - [Generating SECRET_KEY_BASE](#generating-secret-key-base)
+- [Customization](#customization)
+- [Contributing](#contributing)
+- [License](#license)
 
-* Ruby version
+## Getting Started
 
-* System dependencies
+To get started with the Pixel Art Generator, follow the instructions below.
 
-* Configuration
+## Prerequisites
 
-* Database creation
+Make sure you have the following installed on your system:
 
-* Database initialization
+- [Docker](https://docs.docker.com/get-docker/)
+- [Ruby](https://www.ruby-lang.org/en/documentation/installation/)
+- [Bundler](https://bundler.io/)
 
-* How to run the test suite
+Optional:
+- [Terraform](https://learn.hashicorp.com/tutorials/terraform/install-cli) (for deploying with Terraform if desired)
 
-* Services (job queues, cache servers, search engines, etc.)
+# Installation
 
-* Deployment instructions
+## 1a (Recommended): Building from Source
 
-* ...
+1. Clone the repository:
+
+   ```bash
+   git clone https://github.com/your-username/pixel-art-generator.git
+   ```
+
+2. Change into the project directory:
+
+   ```bash
+   cd pixel-art-generator
+   ```
+
+3. docker build -t pixel-art-generator .
+
+   ```bash
+   docker build -t pixel-art-generator .
+   ```
+
+  Skip 1b and move to [Docker Installation](#docker-installation) for next steps
+  
+
+## 1b: Pulling from Docker Hub
+
+If you prefer not to build the image locally, you can pull the Docker image directly from Docker Hub:
+
+```bash
+docker pull mylesvarns/pixelartgenerator
+```
+
+## 2a. Docker cli or similar (Yacht, Portainer, etc)
+
+Run the following Docker command to start the Pixel Art Generator:
+
+```bash
+docker run -p 3000:3000 3001:3001 -e SECRET_KEY_BASE=$(docker run --rm pixel-art-generator bin/rails secret) pixel-art-generator
+```
+### Generating SECRET_KEY_BASE
+
+When creating the container manually you will need to state the SECRET_KEY_BASE value before running the app or you will get an immediate termination of the container. If the above docker run command does not work due to permissions, then it is recommended that you generate a new `SECRET_KEY_BASE` value using one of the following commands:
+
+- Linux/Mac:
+
+  ```bash
+  < /dev/urandom tr -dc 'a-zA-Z0-9' | head -c 64
+  ```
+
+- Windows (PowerShell):
+  ```powershell
+  $randomString = -join ((48..57) + (65..90) + (97..122) | Get-Random -Count 64 | ForEach-Object {[char]$_})
+  $randomString
+  ```
+## 2b: Deploy container with Terraform
+
+If you prefer using Terraform to manage your infrastructure, you can deploy the Pixel Art Generator with the following steps:
+
+1. Install Terraform on your machine. You can follow the official installation guide [here](https://learn.hashicorp.com/tutorials/terraform/install-cli).
+
+2. Create a terraform file, in this case we will call it `main.tf`, with the following content:
+
+   ```hcl
+   terraform {
+     required_providers {
+       docker = {
+         source  = "kreuzwerker/docker"
+         version = "~> 3.0.2"
+       }
+     }
+   }
+
+   resource "random_password" "rails_secret_key_base" {
+     length  = 64
+     special = true
+   }
+
+   provider "docker" {
+     host = "npipe:////.//pipe//docker_engine"
+   }
+
+   resource "docker_image" "pixelartgenerator" {
+     name = "pixelartgenerator:0.1"
+   }
+
+   resource "docker_container" "pixelartgenerator" {
+     image = docker_image.pixelartgenerator.name
+     name  = "pixelartgenerator"
+     logs  = true
+
+     ports {
+       internal = 3000
+       external = 3000
+     }
+
+     ports {
+       internal = 3001
+       external = 3001
+     }
+
+     env = [
+       "SECRET_KEY_BASE=${random_password.rails_secret_key_base.result}",
+     ]
+   }
+
+   ```
+
+3. Replace the docker provider above with this if you are using windows and docker instead of linux.
+
+   ```hcl
+   provider "docker" {
+     host = "npipe:////.//pipe//docker_engine"
+   }
+   ```
+
+   #### If you have changed the default path to your docker_engine from the defaults on windows, linux, or mac, then you must enter that path correctly in the above code instead.
+
+4. Run the following commands in your terminal:
+
+   ```bash
+   terraform init
+   terraform apply
+   ```
+5. Terraform will prompt you to confirm the changes. Type yes to proceed.
+6. Voila. The image is now running as a container.
+
+
+## Usage
+
+The application will be accessible at http://localhost on ports 3000 (http) and 3001 (https) by default. If you have this behind a reverse proxy then you will need to follow the configuration requirements for your proxy setup.
+
+### Main Webpage
+
+Main webpage allows you to select a pixel grid size and upload an image that will be pixalated. 
+
+## Customization
+
+To modify this page, open the `index.html.erb` file located in `app/views/pixel_art_generator/` within the container to view the main webpage. This HTML file contains the structure for the Pixel Art Generator interface. Note that any change you make to the running container will not persist and is recommended. If you plan on modifying, it is recommened to build from source so you can modify the container and rebuild it when required.
+
+Customize the appearance of the Pixel Art Generator by modifying the CSS file located at `app/assets/stylesheets/pixel_art_generator.css`. Adjust pixel sizes, container styles, and button appearances as needed.
+
+For additional functionality, explore the JavaScript file at `app/assets/javascripts/pixel_art_generator.js`. The main logic for pixel manipulation and canvas creation resides here.
+
+Note that any functions you add to the .js file where you expect user interaction to work with will require a corresponding element in the html.erb file, a depending on what it is likely a small change to the .css file to make it look correct.
+
+## Contributing
+
+Contributions are welcome! Feel free to open issues or submit pull requests to enhance the Pixel Art Generator.
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).
