@@ -1,4 +1,4 @@
-Welcome to the Pixel Art Generator! This web application allows users to create pixel art easily, providing a canvas with customizable grid sizes and various features for an enhanced pixel art creation experience.
+Welcome to the Pixel Art Generator! This web application allows users to create pixel art easily by providing a canvas with customizable grid sizes and various features for an enhanced pixel art creation experience. Or at least, that is what one would hope. The truth is that at the moment this is just being used as a PoC and test image for CI/CD automation processes. It works, but you can find better images elsewhere as I just spun this app up from scratch in a day with no real plan on what to throw into it.
 
 ## Table of Contents
 
@@ -10,10 +10,10 @@ Welcome to the Pixel Art Generator! This web application allows users to create 
     - [Pulling from Docker Hub](#1b-pulling-from-docker-hub)
   - Deploy Container
     - [Docker CLI or Similar (Yacht, Portainer, etc)](#2a-docker-cli-or-similar-yacht-portainer-etc)
+      - [Generating SECRET_KEY_BASE](#generating-secret-key-base)
     - [Deploy Container with Terraform](#2b-deploy-container-with-terraform)
 - [Usage](#usage)
   - [Main Webpage](#main-webpage)
-  - [Generating SECRET_KEY_BASE](#generating-secret-key-base)
 - [Customization](#customization)
 - [Contributing](#contributing)
 - [License](#license)
@@ -73,9 +73,9 @@ Run the following Docker command to start the Pixel Art Generator:
 ```bash
 docker run -p 3000:3000 3001:3001 -e SECRET_KEY_BASE=$(docker run --rm pixel-art-generator bin/rails secret) pixel-art-generator
 ```
-### Generating SECRET_KEY_BASE
+#### Generating SECRET_KEY_BASE
 
-When creating the container manually you will need to state the SECRET_KEY_BASE value before running the app or you will get an immediate termination of the container. If the above docker run command does not work due to permissions, then it is recommended that you generate a new `SECRET_KEY_BASE` value using one of the following commands:
+When creating the container manually you will need to state the SECRET_KEY_BASE value before running the app or you will get an immediate termination of the container. The secret key base is the string that Rails uses to encrypt your credentials file. If the above docker run command does not work due to permissions, then it is recommended that you generate a new `SECRET_KEY_BASE` value using one of the following commands:
 
 - Linux/Mac:
 
