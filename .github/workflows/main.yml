@@ -1,0 +1,28 @@
+name: CI
+
+on: [push]
+
+jobs:
+    sast_scan:
+      name: Run brakeman scan
+      # Run this job on ubuntu-latest
+      runs-on: ubuntu-latest
+  
+      steps:
+        - name: Checkout Repo
+          uses: actions/checkout@v2
+        
+        - name: Setup Ruby
+          uses: actions/setup-ruby@v2
+          with:
+            ruby-version: 3.2.3
+  
+        - name: Install dependencies
+          run: |
+            gem install bundler
+            bundle install
+  
+        - name: Run brakeman
+          run: bundle exec brakeman
+          
+  
